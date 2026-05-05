@@ -38,57 +38,104 @@ def init_db():
     c.execute('SELECT count(*) FROM jogos')
     if c.fetchone()[0] == 0:
         jogos_da_copa = [
+            jogos_da_copa = [
             # Grupo A
-            ('México', 'África do Sul', '2026-06-11 16:00:00'),
-            ('Coreia do Sul', 'República Tcheca', '2026-06-11 20:00:00'),
-            ('República Tcheca', 'África do Sul', '2026-06-18 13:00:00'),
-            ('México', 'Coreia do Sul', '2026-06-18 22:00:00'),
+            ('🇲🇽 México', '🇿🇦 África do Sul', '2026-06-11 16:00:00'),
+            ('🇰🇷 Coreia do Sul', '🇨🇿 República Tcheca', '2026-06-11 20:00:00'),
+            ('🇨🇿 República Tcheca', '🇿🇦 África do Sul', '2026-06-18 13:00:00'),
+            ('🇲🇽 México', '🇰🇷 Coreia do Sul', '2026-06-18 22:00:00'),
+            ('🇨🇿 República Tcheca', '🇲🇽 México', '2026-06-24 22:00:00'),
+            ('🇿🇦 África do Sul', '🇰🇷 Coreia do Sul', '2026-06-24 22:00:00'),
             
             # Grupo B
-            ('Canadá', 'Bósnia', '2026-06-12 16:00:00'),
-            ('Catar', 'Suiça', '2026-06-13 16:00:00'),
+            ('🇨🇦 Canadá', '🇧🇦 Bósnia', '2026-06-12 16:00:00'),
+            ('🇶🇦 Catar', '🇨🇭 Suíça', '2026-06-13 16:00:00'),
+            ('🇨🇭 Suíça', '🇧🇦 Bósnia', '2026-06-18 16:00:00'),
+            ('🇨🇦 Canadá', '🇶🇦 Catar', '2026-06-18 19:00:00'),
+            ('🇨🇦 Canadá', '🇨🇭 Suíça', '2026-06-24 16:00:00'),
+            ('🇧🇦 Bósnia', '🇶🇦 Catar', '2026-06-24 16:00:00'),
 
             # Grupo C
-            ('Brasil', 'Marrocos' '2026-06-13 19:00:00'),
-            ('Haiti', 'Escócia' '2026-06-13 22:00:'),
+            ('🇧🇷 Brasil', '🇲🇦 Marrocos', '2026-06-13 19:00:00'),
+            ('🇭🇹 Haiti', '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia', '2026-06-13 22:00:00'),
+            ('🇧🇷 Brasil', '🇭🇹 Haiti', '2026-06-19 21:30:00'),
+            ('🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia', '🇲🇦 Marrocos', '2026-06-19 19:00:00'),
+            ('🇧🇷 Brasil', '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia', '2026-06-24 19:00:00'),
+            ('🇲🇦 Marrocos', '🇭🇹 Haiti', '2026-06-24 19:00:00'),
 
             # Grupo D
-            ('Estados Unidos', 'Paraguai', '2026-06-12 22:00:00'),
-            ('Austrália', 'Turquia', '2026-06-14 01:00:00'),
+            ('🇺🇸 Estados Unidos', '🇵🇾 Paraguai', '2026-06-12 22:00:00'),
+            ('🇦🇺 Austrália', '🇹🇷 Turquia', '2026-06-14 01:00:00'),
+            ('🇺🇸 Estados Unidos', '🇦🇺 Austrália', '2026-06-19 16:00:00'),
+            ('🇹🇷 Turquia', '🇵🇾 Paraguai', '2026-06-19 00:00:00'),
+            ('🇺🇸 Estados Unidos', '🇹🇷 Turquia', '2026-06-25 23:00:00'),
+            ('🇦🇺 Austrália', '🇵🇾 Paraguai', '2026-06-25 23:00:00'),
 
-            #Grupo E
-            ('Alemanha', 'Curaçau', '2026-06-14 14:00:00'),
-            ('Costa do Marfim', 'Equador', '2026-06-14 20:00:00'),
+            # Grupo E
+            ('🇩🇪 Alemanha', '🇨🇼 Curaçau', '2026-06-14 14:00:00'),
+            ('🇨🇮 Costa do Marfim', '🇪🇨 Equador', '2026-06-14 20:00:00'),
+            ('🇩🇪 Alemanha', '🇨🇮 Costa do Marfim', '2026-06-20 17:00:00'),
+            ('🇨🇼 Curaçau', '🇪🇨 Equador', '2026-06-20 21:00:00'),
+            ('🇩🇪 Alemanha', '🇪🇨 Equador', '2026-06-25 17:00:00'),
+            ('🇨🇼 Curaçau', '🇨🇮 Costa do Marfim', '2026-06-25 17:00:00'),
 
-            #Grupo F
-            ('Holanda', 'Japão', '2026-06-14 17:00:00'),
-            ('Suécia', 'Tunísia', '2026-06-14 23:00:00'),
+            # Grupo F
+            ('🇳🇱 Holanda', '🇯🇵 Japão', '2026-06-14 17:00:00'),
+            ('🇸🇪 Suécia', '🇹🇳 Tunísia', '2026-06-14 23:00:00'),
+            ('🇳🇱 Holanda', '🇸🇪 Suécia', '2026-06-20 14:00:00'),
+            ('🇹🇳 Tunísia', '🇯🇵 Japão', '2026-06-20 23:00:00'),
+            ('🇯🇵 Japão', '🇸🇪 Suécia', '2026-06-25 20:00:00'),
+            ('🇳🇱 Holanda', '🇹🇳 Tunísia', '2026-06-25 20:00:00'),
 
-            #Grupo G
-            ('Bélgica', 'Egito', '2026-06-15 16:00:00'),
-            ('Irã', 'Nova Zelândia', '2026-06-15 22:00:00'),
+            # Grupo G
+            ('🇧🇪 Bélgica', '🇪🇬 Egito', '2026-06-15 16:00:00'),
+            ('🇮🇷 Irã', '🇳🇿 Nova Zelândia', '2026-06-15 22:00:00'),
+            ('🇧🇪 Bélgica', '🇮🇷 Irã', '2026-06-21 16:00:00'),
+            ('🇳🇿 Nova Zelândia', '🇪🇬 Egito', '2026-06-20 22:00:00'),
+            ('🇧🇪 Bélgica', '🇳🇿 Nova Zelândia', '2026-06-27 00:00:00'),
+            ('🇮🇷 Irã', '🇪🇬 Egito', '2026-06-27 00:00:00'),
 
-            #Grupo H
-            ('Espanha', 'Cabo Verde', '2026-06-15 13:00:00'),
-            ('Arábia Saudita', 'Uruguai', '2026-06-15 19:00:00'),
+            # Grupo H
+            ('🇪🇸 Espanha', '🇨🇻 Cabo Verde', '2026-06-15 13:00:00'),
+            ('🇸🇦 Arábia Saudita', '🇺🇾 Uruguai', '2026-06-15 19:00:00'),
+            ('🇪🇸 Espanha', '🇸🇦 Arábia Saudita', '2026-06-21 13:00:00'),
+            ('🇨🇻 Cabo Verde', '🇺🇾 Uruguai', '2026-06-21 19:00:00'),
+            ('🇪🇸 Espanha', '🇺🇾 Uruguai', '2026-06-26 21:00:00'),
+            ('🇨🇻 Cabo Verde', '🇸🇦 Arábia Saudita', '2026-06-26 21:00:00'),
 
-            #Grupo I
-            ('França', 'Senegal', '2026-06-16 16:00:00'),
-            ('Iraque', 'Noruega', '2026-06-16 19:00:00'),
+            # Grupo I
+            ('🇫🇷 França', '🇸🇳 Senegal', '2026-06-16 16:00:00'),
+            ('🇮🇶 Iraque', '🇳🇴 Noruega', '2026-06-16 19:00:00'),
+            ('🇫🇷 França', '🇮🇶 Iraque', '2026-06-22 18:00:00'),
+            ('🇳🇴 Noruega', '🇸🇳 Senegal', '2026-06-22 21:00:00'),
+            ('🇫🇷 França', '🇳🇴 Noruega', '2026-06-26 16:00:00'),
+            ('🇮🇶 Iraque', '🇸🇳 Senegal', '2026-06-26 16:00:00'),
 
-            #Grupo J
-            ('Áustria', 'Jordânia', '2026-06-16 01:00:00'),
-            ('Argentina', 'Argélia', '2026-06-16 22:00:00'),
+            # Grupo J
+            ('🇦🇹 Áustria', '🇯🇴 Jordânia', '2026-06-16 01:00:00'),
+            ('🇦🇷 Argentina', '🇩🇿 Argélia', '2026-06-16 22:00:00'),
+            ('🇦🇷 Argentina', '🇦🇹 Áustria', '2026-06-22 14:00:00'),
+            ('🇯🇴 Jordânia', '🇩🇿 Argélia', '2026-06-23 00:00:00'),
+            ('🇦🇹 Áustria', '🇩🇿 Argélia', '2026-06-27 23:00:00'),
+            ('🇦🇷 Argentina', '🇯🇴 Jordânia', '2026-06-27 23:00:00'),
 
-            #Grupo K
-            ('Portugal', 'Congo', '2026-06-17 14:00:00'),
-            (' Uzbequistão', 'Colômbia', '2026-06-17 21:00:00'),
+            # Grupo K
+            ('🇵🇹 Portugal', '🇨🇩 Congo', '2026-06-17 14:00:00'),
+            ('🇺🇿 Uzbequistão', '🇨🇴 Colômbia', '2026-06-17 21:00:00'),
+            ('🇵🇹 Portugal', '🇺🇿 Uzbequistão', '2026-06-23 14:00:00'),
+            ('🇨🇩 Congo', '🇨🇴 Colômbia', '2026-06-23 23:00:00'),
+            ('🇵🇹 Portugal', '🇨🇴 Colômbia', '2026-06-27 20:30:00'),
+            ('🇨🇩 Congo', '🇺🇿 Uzbequistão', '2026-06-27 20:30:00'),
 
-            #Grupo L
-            ('Inglaterra', 'Croácia', '2026-06-17 17:00:00'),
-            ('Gana', 'Panamá', '2026-06-17 20:00:00'),
+            # Grupo L
+            ('🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra', '🇭🇷 Croácia', '2026-06-17 17:00:00'),
+            ('🇬🇭 Gana', '🇵🇦 Panamá', '2026-06-17 20:00:00'),
+            ('🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra', '🇬🇭 Gana', '2026-06-23 17:00:00'),
+            ('🇵🇦 Panamá', '🇭🇷 Croácia', '2026-06-23 20:00:00'),
+            ('🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra', '🇵🇦 Panamá', '2026-06-27 18:00:00'),
+            ('🇬🇭 Gana', '🇭🇷 Croácia', '2026-06-27 18:00:00')
         ]
-        
+
         for time_a, time_b, data_hora in jogos_da_copa:
             c.execute("INSERT INTO jogos (time_a, time_b, data_hora) VALUES (?, ?, ?)", 
                       (time_a, time_b, data_hora))
@@ -119,7 +166,8 @@ def verificar_login(nome, senha):
 # --- FUNÇÕES DO JOGO ---
 def get_jogos():
     conn = sqlite3.connect(DB_NAME)
-    df = pd.read_sql_query("SELECT * FROM jogos", conn)
+    # Aqui a mágica acontece: O banco organiza por data e hora!
+    df = pd.read_sql_query("SELECT * FROM jogos ORDER BY data_hora ASC", conn)
     conn.close()
     return df
 
