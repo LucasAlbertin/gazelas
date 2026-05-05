@@ -5,7 +5,7 @@ from datetime import datetime
 
 # --- CONFIGURAÇÃO INICIAL ---
 st.set_page_config(page_title="Gazelas Bet 2026", layout="centered")
-DB_NAME = "bolao.db"
+DB_NAME = "bolao_jogos.db"
 
 # --- FUNÇÕES DE BANCO DE DADOS ---
 def init_db():
