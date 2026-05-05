@@ -12,6 +12,7 @@ def init_db():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     
+    # Tabela de Jogos
     c.execute('''CREATE TABLE IF NOT EXISTS jogos (
                     id INTEGER PRIMARY KEY,
                     time_a TEXT,
@@ -20,21 +21,28 @@ def init_db():
                     gols_a INTEGER,
                     gols_b INTEGER)''')
                     
+    # Tabela de Palpites
     c.execute('''CREATE TABLE IF NOT EXISTS palpites (
                     usuario TEXT,
                     jogo_id INTEGER,
                     palpite_a INTEGER,
                     palpite_b INTEGER,
                     PRIMARY KEY (usuario, jogo_id))''')
+                    
+    # NOVA TABELA: Usuários e Senhas
+    c.execute('''CREATE TABLE IF NOT EXISTS usuarios (
+                    nome TEXT PRIMARY KEY,
+                    senha TEXT)''')
     
+    # Inserir jogos iniciais apenas se estiver vazio
     c.execute('SELECT count(*) FROM jogos')
     if c.fetchone()[0] == 0:
-        
-        # --- SEUS JOGOS REAIS AQUI ---
         jogos_da_copa = [
             # Grupo A
             ('México', 'África do Sul', '2026-06-11 16:00:00'),
             ('Coreia do Sul', 'República Tcheca', '2026-06-11 20:00:00'),
+            ('República Tcheca', 'África do Sul', '2026-06-18 13:00:00'),
+            ('México', 'Coreia do Sul', '2026-06-18 22:00:00'),
             
             # Grupo B
             ('Canadá', 'Bósnia', '2026-06-12 16:00:00'),
@@ -84,11 +92,31 @@ def init_db():
         for time_a, time_b, data_hora in jogos_da_copa:
             c.execute("INSERT INTO jogos (time_a, time_b, data_hora) VALUES (?, ?, ?)", 
                       (time_a, time_b, data_hora))
-                      
         conn.commit()
-    
     conn.close()
 
+# --- FUNÇÕES DE LOGIN ---
+def criar_usuario(nome, senha):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    try:
+        c.execute("INSERT INTO usuarios (nome, senha) VALUES (?, ?)", (nome, senha))
+        conn.commit()
+        sucesso = True
+    except sqlite3.IntegrityError:
+        sucesso = False 
+    conn.close()
+    return sucesso
+
+def verificar_login(nome, senha):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("SELECT * FROM usuarios WHERE nome = ? AND senha = ?", (nome, senha))
+    user = c.fetchone()
+    conn.close()
+    return user is not None
+
+# --- FUNÇÕES DO JOGO ---
 def get_jogos():
     conn = sqlite3.connect(DB_NAME)
     df = pd.read_sql_query("SELECT * FROM jogos", conn)
@@ -156,21 +184,62 @@ def calcular_ranking():
         
     return pd.DataFrame(list(pontuacoes.items()), columns=['Participante', 'Pontos']).sort_values(by='Pontos', ascending=False).reset_index(drop=True)
 
+
 # --- INICIALIZAÇÃO ---
 init_db()
 
-# --- INTERFACE ---
+if 'usuario_logado' not in st.session_state:
+    st.session_state.usuario_logado = None
+
+
+# --- INTERFACE PRINCIPAL ---
 st.title("⚽🦌 Gazelas Bet")
 
-usuario = st.text_input("Digite seu nome para começar:", placeholder="Ex: Lucas")
+# SE NÃO ESTIVER LOGADO -> MOSTRA TELA DE LOGIN
+if st.session_state.usuario_logado is None:
+    st.subheader("🔐 Acesso ao Bolão")
+    aba_login, aba_criar = st.tabs(["Entrar", "Criar Conta Nova"])
+    
+    with aba_login:
+        nome_login = st.text_input("Seu Nome:")
+        senha_login = st.text_input("Sua Senha:", type="password")
+        if st.button("Entrar", type="primary"):
+            if verificar_login(nome_login, senha_login):
+                st.session_state.usuario_logado = nome_login
+                st.rerun()
+            else:
+                st.error("Nome ou senha incorretos!")
+                
+    with aba_criar:
+        st.info("Atenção: Escolha um nome curto que seus amigos reconheçam (Ex: Lucas, Alemao, Fer)")
+        novo_nome = st.text_input("Escolha um Nome:")
+        nova_senha = st.text_input("Crie uma Senha:", type="password")
+        if st.button("Criar Conta"):
+            if novo_nome and nova_senha:
+                if criar_usuario(novo_nome, nova_senha):
+                    st.success("Conta criada com sucesso! Vá na aba 'Entrar' para acessar.")
+                else:
+                    st.error("🚨 Esse nome já existe! Escolha outro (ex: Lucas2).")
+            else:
+                st.warning("Preencha o nome e a senha!")
 
-if usuario:
-    # AGORA TEMOS 4 ABAS
+# SE ESTIVER LOGADO -> MOSTRA O APLICATIVO
+else:
+    usuario = st.session_state.usuario_logado
+    
+    col_nome, col_sair = st.columns([4, 1])
+    with col_nome:
+        st.write(f"Bem-vindo(a), **{usuario}**!")
+    with col_sair:
+        if st.button("Sair"):
+            st.session_state.usuario_logado = None
+            st.rerun()
+
     tab1, tab2, tab3, tab4 = st.tabs(["⚽ Palpitar", "🏆 Ranking", "👀 Espiar Palpites", "⚙️ Admin"])
 
     # --- ABA 1: PALPITES ---
     with tab1:
-        st.subheader(f"Palpites de {usuario}")
+        st.subheader("Meus Palpites")
         jogos = get_jogos()
         palpites_user = get_palpites_usuario(usuario)
         
@@ -241,7 +310,6 @@ if usuario:
         st.write("Selecione um jogo para ver os palpites (Só são revelados após o início da partida).")
         
         jogos = get_jogos()
-        # Cria uma lista formatada para a caixa de seleção
         opcoes_jogos = {jogo['id']: f"{jogo['time_a']} x {jogo['time_b']} ({datetime.strptime(jogo['data_hora'], '%Y-%m-%d %H:%M:%S').strftime('%d/%m %H:%M')})" for index, jogo in jogos.iterrows()}
         
         jogo_selecionado_id = st.selectbox("Escolha o jogo:", options=list(opcoes_jogos.keys()), format_func=lambda x: opcoes_jogos[x])
@@ -251,7 +319,6 @@ if usuario:
             hora_jogo = datetime.strptime(jogo_info['data_hora'], '%Y-%m-%d %H:%M:%S')
             agora = datetime.now()
             
-            # Trava anti-cópia: só mostra se o jogo já começou
             if agora >= hora_jogo:
                 df_palpites_jogo = get_todos_palpites_do_jogo(jogo_selecionado_id)
                 if not df_palpites_jogo.empty:
@@ -278,6 +345,3 @@ if usuario:
                 if st.button("Salvar Resultado Real", key=f"admin_btn_{jogo['id']}"):
                     atualizar_resultado_real(jogo['id'], novo_gols_a, novo_gols_b)
                     st.success("Placar real atualizado!")
-
-else:
-    st.info("👆 Digite seu nome acima para entrar no Bolão.")
