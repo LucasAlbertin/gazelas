@@ -37,7 +37,6 @@ def init_db():
     # Inserir jogos iniciais apenas se estiver vazio
     c.execute('SELECT count(*) FROM jogos')
     if c.fetchone()[0] == 0:
-        jogos_da_copa = [
             jogos_da_copa = [
             # Grupo A
             ('🇲🇽 México', '🇿🇦 África do Sul', '2026-06-11 16:00:00'),
