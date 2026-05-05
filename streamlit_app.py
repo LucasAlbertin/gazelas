@@ -37,7 +37,7 @@ def init_db():
     # Inserir jogos iniciais apenas se estiver vazio
     c.execute('SELECT count(*) FROM jogos')
     if c.fetchone()[0] == 0:
-            jogos_da_copa = [
+        jogos_da_copa = [
             # Grupo A
             ('🇲🇽 México', '🇿🇦 África do Sul', '2026-06-11 16:00:00'),
             ('🇰🇷 Coreia do Sul', '🇨🇿 República Tcheca', '2026-06-11 20:00:00'),
@@ -134,13 +134,14 @@ def init_db():
             ('🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra', '🇵🇦 Panamá', '2026-06-27 18:00:00'),
             ('🇬🇭 Gana', '🇭🇷 Croácia', '2026-06-27 18:00:00')
         ]
-
+        
+        # Veja como o "for" está alinhadinho com o "jogos_da_copa" agora!
         for time_a, time_b, data_hora in jogos_da_copa:
             c.execute("INSERT INTO jogos (time_a, time_b, data_hora) VALUES (?, ?, ?)", 
                       (time_a, time_b, data_hora))
         conn.commit()
     conn.close()
-
+    
 # --- FUNÇÕES DE LOGIN ---
 def criar_usuario(nome, senha):
     conn = sqlite3.connect(DB_NAME)
