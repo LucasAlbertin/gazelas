@@ -33,14 +33,52 @@ def init_db():
         # --- SEUS JOGOS REAIS AQUI ---
         jogos_da_copa = [
             # Grupo A
-            ('🇲🇽 México', '🇿🇦 África do Sul', '2026-06-11 16:00:00'),
-            ('🇰🇷 Coreia do Sul', '🇨🇿 República Tcheca', '2026-06-11 20:00:00'),
+            ('México', 'África do Sul', '2026-06-11 16:00:00'),
+            ('Coreia do Sul', 'República Tcheca', '2026-06-11 20:00:00'),
             
             # Grupo B
-            ('🇨🇦 Canadá', '🇧🇦 Bósnia', '2026-06-12 16:00:00'),
-            
+            ('Canadá', 'Bósnia', '2026-06-12 16:00:00'),
+            ('Catar', 'Suiça', '2026-06-13 16:00:00'),
+
+            # Grupo C
+            ('Brasil', 'Marrocos' '2026-06-13 19:00:00'),
+            ('Haiti', 'Escócia' '2026-06-13 22:00:'),
+
             # Grupo D
-            ('🇺🇸 Estados Unidos', '🇵🇾 Paraguai', '2026-06-12 22:00:00')
+            ('Estados Unidos', 'Paraguai', '2026-06-12 22:00:00'),
+            ('Austrália', 'Turquia', '2026-06-14 01:00:00'),
+
+            #Grupo E
+            ('Alemanha', 'Curaçau', '2026-06-14 14:00:00'),
+            ('Costa do Marfim', 'Equador', '2026-06-14 20:00:00'),
+
+            #Grupo F
+            ('Holanda', 'Japão', '2026-06-14 17:00:00'),
+            ('Suécia', 'Tunísia', '2026-06-14 23:00:00'),
+
+            #Grupo G
+            ('Bélgica', 'Egito', '2026-06-15 16:00:00'),
+            ('Irã', 'Nova Zelândia', '2026-06-15 22:00:00'),
+
+            #Grupo H
+            ('Espanha', 'Cabo Verde', '2026-06-15 13:00:00'),
+            ('Arábia Saudita', 'Uruguai', '2026-06-15 19:00:00'),
+
+            #Grupo I
+            ('França', 'Senegal', '2026-06-16 16:00:00'),
+            ('Iraque', 'Noruega', '2026-06-16 19:00:00'),
+
+            #Grupo J
+            ('Áustria', 'Jordânia', '2026-06-16 01:00:00'),
+            ('Argentina', 'Argélia', '2026-06-16 22:00:00'),
+
+            #Grupo K
+            ('Portugal', 'Congo', '2026-06-17 14:00:00'),
+            (' Uzbequistão', 'Colômbia', '2026-06-17 21:00:00'),
+
+            #Grupo L
+            ('Inglaterra', 'Croácia', '2026-06-17 17:00:00'),
+            ('Gana', 'Panamá', '2026-06-17 20:00:00'),
         ]
         
         for time_a, time_b, data_hora in jogos_da_copa:
