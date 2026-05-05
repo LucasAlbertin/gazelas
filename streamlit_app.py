@@ -135,13 +135,12 @@ def init_db():
             ('🇬🇭 Gana', '🇭🇷 Croácia', '2026-06-27 18:00:00')
         ]
         
-        # Veja como o "for" está alinhadinho com o "jogos_da_copa" agora!
         for time_a, time_b, data_hora in jogos_da_copa:
             c.execute("INSERT INTO jogos (time_a, time_b, data_hora) VALUES (?, ?, ?)", 
                       (time_a, time_b, data_hora))
         conn.commit()
     conn.close()
-    
+
 # --- FUNÇÕES DE LOGIN ---
 def criar_usuario(nome, senha):
     conn = sqlite3.connect(DB_NAME)
@@ -166,7 +165,7 @@ def verificar_login(nome, senha):
 # --- FUNÇÕES DO JOGO ---
 def get_jogos():
     conn = sqlite3.connect(DB_NAME)
-    # Aqui a mágica acontece: O banco organiza por data e hora!
+    # Aqui os jogos são puxados em ordem cronológica:
     df = pd.read_sql_query("SELECT * FROM jogos ORDER BY data_hora ASC", conn)
     conn.close()
     return df
@@ -232,13 +231,11 @@ def calcular_ranking():
         
     return pd.DataFrame(list(pontuacoes.items()), columns=['Participante', 'Pontos']).sort_values(by='Pontos', ascending=False).reset_index(drop=True)
 
-
 # --- INICIALIZAÇÃO ---
 init_db()
 
 if 'usuario_logado' not in st.session_state:
     st.session_state.usuario_logado = None
-
 
 # --- INTERFACE PRINCIPAL ---
 st.title("⚽🦌 Gazelas Bet")
@@ -296,6 +293,7 @@ else:
             hora_jogo = datetime.strptime(jogo['data_hora'], '%Y-%m-%d %H:%M:%S')
             agora = datetime.now()
             
+            # Formatação do cabeçalho do jogo
             col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 3])
             
             with col1:
