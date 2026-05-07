@@ -333,42 +333,40 @@ else:
             jogos = get_jogos()
             p_u = get_palpites_usuario(user)
             
-            # --- LÓGICA NOVA: AGRUPAR POR DIA ---
-            # Extrai apenas a data (sem a hora) para fazer os agrupamentos
             jogos['data_apenas'] = pd.to_datetime(jogos['data_hora']).dt.strftime('%d/%m/%Y')
             dias_unicos = jogos['data_apenas'].unique()
             
             for dia in dias_unicos:
-                st.markdown(f"### 📅 {dia}") # Título do dia
-                jogos_do_dia = jogos[jogos['data_apenas'] == dia]
-                
-                for _, j in jogos_do_dia.iterrows():
-                    st.markdown("---")
-                    h_j = datetime.strptime(j['data_hora'], '%Y-%m-%d %H:%M:%S')
-                    travado = datetime.now() >= h_j
+                # --- AQUI ESTÁ A SANFONA (EXPANDER) ---
+                with st.expander(f"📅 Jogos do dia {dia}"):
+                    jogos_do_dia = jogos[jogos['data_apenas'] == dia]
                     
-                    c1, c2, c3, c4, c5 = st.columns([3, 1, 1, 1, 3])
-                    with c1: st.write(f"**{j['time_a']}**")
-                    with c5: st.write(f"**{j['time_b']}**")
-                    
-                    p_at = p_u[p_u['jogo_id'] == j['id']]
-                    v_a = int(p_at.iloc[0]['palpite_a']) if not p_at.empty else 0
-                    v_b = int(p_at.iloc[0]['palpite_b']) if not p_at.empty else 0
-                    
-                    if travado:
-                        with c2: st.warning(f"{v_a}", icon="🔒")
-                        with c3: st.write("X")
-                        with c4: st.warning(f"{v_b}", icon="🔒")
-                        st.caption(f"Jogo iniciado ({h_j.strftime('%H:%M')}).")
-                    else:
-                        with c2: pa_a = st.number_input(f"A_{j['id']}", min_value=0, value=v_a, label_visibility="collapsed")
-                        with c3: st.write("X")
-                        with c4: pa_b = st.number_input(f"B_{j['id']}", min_value=0, value=v_b, label_visibility="collapsed")
-                        if st.button(f"Salvar {j['time_a']} x {j['time_b']}", key=f"btn_{j['id']}"):
-                            salvar_palpite(user, int(j['id']), pa_a, pa_b)
-                            st.success("Salvo!")
-                        st.caption(f"Fecha às: {h_j.strftime('%H:%M')}")
-            # -------------------------------------
+                    for _, j in jogos_do_dia.iterrows():
+                        st.markdown("---")
+                        h_j = datetime.strptime(j['data_hora'], '%Y-%m-%d %H:%M:%S')
+                        travado = datetime.now() >= h_j
+                        
+                        c1, c2, c3, c4, c5 = st.columns([3, 1, 1, 1, 3])
+                        with c1: st.write(f"**{j['time_a']}**")
+                        with c5: st.write(f"**{j['time_b']}**")
+                        
+                        p_at = p_u[p_u['jogo_id'] == j['id']]
+                        v_a = int(p_at.iloc[0]['palpite_a']) if not p_at.empty else 0
+                        v_b = int(p_at.iloc[0]['palpite_b']) if not p_at.empty else 0
+                        
+                        if travado:
+                            with c2: st.warning(f"{v_a}", icon="🔒")
+                            with c3: st.write("X")
+                            with c4: st.warning(f"{v_b}", icon="🔒")
+                            st.caption(f"Jogo iniciado ({h_j.strftime('%H:%M')}).")
+                        else:
+                            with c2: pa_a = st.number_input(f"A_{j['id']}", min_value=0, value=v_a, label_visibility="collapsed")
+                            with c3: st.write("X")
+                            with c4: pa_b = st.number_input(f"B_{j['id']}", min_value=0, value=v_b, label_visibility="collapsed")
+                            if st.button(f"Salvar {j['time_a']} x {j['time_b']}", key=f"btn_{j['id']}"):
+                                salvar_palpite(user, int(j['id']), pa_a, pa_b)
+                                st.success("Salvo!")
+                            st.caption(f"Fecha às: {h_j.strftime('%H:%M')}")
 
     with tab2:
         st.markdown("### *Gazelas Bet*⚽🦌")
