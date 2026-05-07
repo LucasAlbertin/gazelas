@@ -40,7 +40,7 @@ def init_db():
         jogos_da_copa = [
             # Grupo A
             ('🇲🇽 México', '🇿🇦 África do Sul', '2026-06-11 16:00:00'),
-            ('🇰🇷 Coreia do Sul', '🇨🇿 República Tcheca', '2026-06-11 20:00:00'),
+            ('🇰🇷 Coreia do Sul', '🇨🇿 República Tcheca', '2026-06-11 23:00:00'),
             ('🇨🇿 República Tcheca', '🇿🇦 África do Sul', '2026-06-18 13:00:00'),
             ('🇲🇽 México', '🇰🇷 Coreia do Sul', '2026-06-18 22:00:00'),
             ('🇨🇿 República Tcheca', '🇲🇽 México', '2026-06-24 22:00:00'),
