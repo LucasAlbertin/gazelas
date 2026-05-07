@@ -7,8 +7,9 @@ from datetime import datetime
 st.set_page_config(page_title="Gazelas Bet 2026", layout="centered")
 DB_NAME = "bolao_oficial.db"
 
-# --- DEFINA AQUI O NOME DO DONO DA BANCA ---
-USUARIO_ADMIN = "Alisson"
+# --- 🔐 CREDENCIAIS SECRETAS DO ADMIN ---
+ADMIN_USER = "Admin"
+ADMIN_PASS = "gazelas123"
 
 # --- FUNÇÕES DE BANCO DE DADOS ---
 def init_db():
@@ -288,7 +289,10 @@ if st.session_state.usuario_logado is None:
         n_l = st.text_input("Seu Nome:")
         s_l = st.text_input("Sua Senha:", type="password")
         if st.button("Entrar", type="primary"):
-            if verificar_login(n_l, s_l):
+            if n_l == ADMIN_USER and s_l == ADMIN_PASS:
+                st.session_state.usuario_logado = "ADMIN"
+                st.rerun()
+            elif verificar_login(n_l, s_l):
                 st.session_state.usuario_logado = n_l
                 st.rerun()
             else: st.error("Nome ou senha incorretos!")
@@ -298,14 +302,22 @@ if st.session_state.usuario_logado is None:
         n_n = st.text_input("Escolha um Nome:")
         s_n = st.text_input("Crie uma Senha:", type="password")
         if st.button("Criar Conta"):
-            if n_n and s_n:
+            if n_n.upper() == ADMIN_USER.upper():
+                st.error("🚨 Nome reservado pelo sistema! Escolha outro.")
+            elif n_n and s_n:
                 if criar_usuario(n_n, s_n): st.success("Conta criada! Vá em 'Entrar'.")
                 else: st.error("🚨 Nome já existe!")
             else: st.warning("Preencha tudo!")
 else:
     user = st.session_state.usuario_logado
     col_n, col_s = st.columns([4, 1])
-    with col_n: st.write(f"Bem-vindo(a), **{user}**!")
+    
+    with col_n: 
+        if user == "ADMIN":
+            st.error("Você está logado como **ADMINISTRADOR MESTRE**.")
+        else:
+            st.write(f"Bem-vindo(a), **{user}**!")
+            
     with col_s: 
         if st.button("Sair"):
             st.session_state.usuario_logado = None
@@ -314,32 +326,49 @@ else:
     tab1, tab2, tab3, tab_copa, tab4 = st.tabs(["⚽ Palpitar", "🏆 Ranking", "👀 Espiar", "🌍 Copa", "⚙️ Admin"])
 
     with tab1:
-        st.subheader("Meus Palpites")
-        jogos = get_jogos()
-        p_u = get_palpites_usuario(user)
-        for _, j in jogos.iterrows():
-            st.markdown("---")
-            h_j = datetime.strptime(j['data_hora'], '%Y-%m-%d %H:%M:%S')
-            travado = datetime.now() >= h_j
-            c1, c2, c3, c4, c5 = st.columns([3, 1, 1, 1, 3])
-            with c1: st.write(f"**{j['time_a']}**")
-            with c5: st.write(f"**{j['time_b']}**")
-            p_at = p_u[p_u['jogo_id'] == j['id']]
-            v_a = int(p_at.iloc[0]['palpite_a']) if not p_at.empty else 0
-            v_b = int(p_at.iloc[0]['palpite_b']) if not p_at.empty else 0
-            if travado:
-                with c2: st.warning(f"{v_a}", icon="🔒")
-                with c3: st.write("X")
-                with c4: st.warning(f"{v_b}", icon="🔒")
-                st.caption(f"Jogo iniciado ({h_j.strftime('%d/%m %H:%M')}).")
-            else:
-                with c2: pa_a = st.number_input(f"A_{j['id']}", min_value=0, value=v_a, label_visibility="collapsed")
-                with c3: st.write("X")
-                with c4: pa_b = st.number_input(f"B_{j['id']}", min_value=0, value=v_b, label_visibility="collapsed")
-                if st.button(f"Salvar {j['time_a']} x {j['time_b']}", key=f"btn_{j['id']}"):
-                    salvar_palpite(user, int(j['id']), pa_a, pa_b)
-                    st.success("Salvo!")
-                st.caption(f"Fecha em: {h_j.strftime('%d/%m %H:%M')}")
+        if user == "ADMIN":
+            st.warning("⚠️ O Administrador Mestre não pode dar palpites. Saia desta conta e entre com a sua conta de jogador normal para palpitar.")
+        else:
+            st.subheader("Meus Palpites")
+            jogos = get_jogos()
+            p_u = get_palpites_usuario(user)
+            
+            # --- LÓGICA NOVA: AGRUPAR POR DIA ---
+            # Extrai apenas a data (sem a hora) para fazer os agrupamentos
+            jogos['data_apenas'] = pd.to_datetime(jogos['data_hora']).dt.strftime('%d/%m/%Y')
+            dias_unicos = jogos['data_apenas'].unique()
+            
+            for dia in dias_unicos:
+                st.markdown(f"### 📅 {dia}") # Título do dia
+                jogos_do_dia = jogos[jogos['data_apenas'] == dia]
+                
+                for _, j in jogos_do_dia.iterrows():
+                    st.markdown("---")
+                    h_j = datetime.strptime(j['data_hora'], '%Y-%m-%d %H:%M:%S')
+                    travado = datetime.now() >= h_j
+                    
+                    c1, c2, c3, c4, c5 = st.columns([3, 1, 1, 1, 3])
+                    with c1: st.write(f"**{j['time_a']}**")
+                    with c5: st.write(f"**{j['time_b']}**")
+                    
+                    p_at = p_u[p_u['jogo_id'] == j['id']]
+                    v_a = int(p_at.iloc[0]['palpite_a']) if not p_at.empty else 0
+                    v_b = int(p_at.iloc[0]['palpite_b']) if not p_at.empty else 0
+                    
+                    if travado:
+                        with c2: st.warning(f"{v_a}", icon="🔒")
+                        with c3: st.write("X")
+                        with c4: st.warning(f"{v_b}", icon="🔒")
+                        st.caption(f"Jogo iniciado ({h_j.strftime('%H:%M')}).")
+                    else:
+                        with c2: pa_a = st.number_input(f"A_{j['id']}", min_value=0, value=v_a, label_visibility="collapsed")
+                        with c3: st.write("X")
+                        with c4: pa_b = st.number_input(f"B_{j['id']}", min_value=0, value=v_b, label_visibility="collapsed")
+                        if st.button(f"Salvar {j['time_a']} x {j['time_b']}", key=f"btn_{j['id']}"):
+                            salvar_palpite(user, int(j['id']), pa_a, pa_b)
+                            st.success("Salvo!")
+                        st.caption(f"Fecha às: {h_j.strftime('%H:%M')}")
+            # -------------------------------------
 
     with tab2:
         st.markdown("### *Gazelas Bet*⚽🦌")
@@ -386,14 +415,12 @@ else:
                 st.dataframe(df_grupo, use_container_width=True)
 
     with tab4:
-        if user == USUARIO_ADMIN:
+        if user == "ADMIN":
             st.subheader("🔑 Painel do Mestre")
             
-            # --- PARTE 1: VER LOGINS E SENHAS ---
-            with st.expander("👥 Lista de Usuários e Senhas"):
+            with st.expander("👥 Lista de Usuários e Senhas (Sigiloso)"):
                 st.dataframe(get_todos_usuarios(), use_container_width=True, hide_index=True)
             
-            # --- PARTE 2: PLACARES REAIS ---
             st.markdown("---")
             st.write("**Preencha os placares oficiais:**")
             jogos_adm = get_jogos()
@@ -409,7 +436,6 @@ else:
                         atualizar_resultado_real(jo['id'], n_ga, n_gb)
                         st.success("Atualizado!")
                         
-            # --- PARTE 3: ADICIONAR NOVOS JOGOS (MATA-MATA) ---
             st.markdown("---")
             st.subheader("➕ Adicionar Jogo (Oitavas, Quartas...)")
             st.write("Crie novos jogos sem perder os dados antigos da primeira fase.")
